@@ -1,6 +1,6 @@
 /*-------------------------------------------------------------------------
 *
-* kmeans.h
+* kmeans_baseline.h
 *    Generic k-means implementation
 *
 * Copyright (c) 2016, Paul Ramsey <pramsey@cleverelephant.ca>
@@ -17,37 +17,56 @@
 * machinery can be used to support any object type that can calculate a
 * "distance" between pairs.
 *
-* To use the k-means infrastructure, just fill out the kmeans_config
-* structure and invoke the kmeans() function.
+* To use the k-means infrastructure, just fill out the kmeans_baseline_config
+* structure and invoke the kmeans_baseline() function.
+*/
+
+/*
+* Threaded calculation is available using pthreads, which practically
+* means UNIX platforms only, unless you're building with a posix
+* compatible environment.
+*
+* #define kmeans_baseline_THREADED
 */
 
 /*
 * When clustering lists with NULL elements, they will get this as
 * their cluster number. (All the other clusters will be non-negative)
 */
-#define KMEANS_NULL_CLUSTER -1
+#define kmeans_baseline_NULL_CLUSTER -1
 
 /*
 * If the algorithm doesn't converge within this number of iterations,
 * it will return with a failure error code.
 */
-#define KMEANS_MAX_ITERATIONS 1000
+#define kmeans_baseline_MAX_ITERATIONS 1000
 
-#define kmeans_malloc(size) malloc(size)
-#define kmeans_free(ptr) free(ptr)
+/*
+* The code doesn't try to figure out how many threads to use, so
+* best to set this to the number of cores you expect to have
+* available. The threshold is the the value of k*n at which to
+* move to multi-threading.
+*/
+#ifdef kmeans_baseline_THREADED
+#define kmeans_baseline_THR_MAX 4
+#define kmeans_baseline_THR_THRESHOLD 250000
+#endif
+
+#define kmeans_baseline_malloc(size) malloc(size)
+#define kmeans_baseline_free(ptr) free(ptr)
 
 typedef void * Pointer;
 
 typedef enum {
-	KMEANS_OK,
-	KMEANS_EXCEEDED_MAX_ITERATIONS,
-	KMEANS_ERROR
-} kmeans_result;
+	kmeans_baseline_OK,
+	kmeans_baseline_EXCEEDED_MAX_ITERATIONS,
+	kmeans_baseline_ERROR
+} kmeans_baseline_result;
 
 /*
 * Prototype for the distance calculating function
 */
-typedef double (*kmeans_distance_method) (const Pointer a, const Pointer b);
+typedef double (*kmeans_baseline_distance_method) (const Pointer a, const Pointer b);
 
 /*
 * Prototype for the centroid calculating function
@@ -57,15 +76,15 @@ typedef double (*kmeans_distance_method) (const Pointer a, const Pointer b);
 * @param cluster the cluster number we are actually generating a centroid for here
 * @param centroid the object to write the centroid result into (already allocated)
 */
-typedef void (*kmeans_centroid_method) (const Pointer * objs, const int * clusters, size_t num_objs, int cluster, Pointer centroid);
+typedef void (*kmeans_baseline_centroid_method) (const Pointer * objs, const int * clusters, size_t num_objs, int cluster, Pointer centroid);
 
-typedef struct kmeans_config
+typedef struct kmeans_baseline_config
 {
 	/* Function returns the "distance" between any pair of objects */
-	kmeans_distance_method distance_method;
+	kmeans_baseline_distance_method distance_method;
 
 	/* Function returns the "centroid" of a collection of objects */
-	kmeans_centroid_method centroid_method;
+	kmeans_baseline_centroid_method centroid_method;
 
 	/* An array of objects to be analyzed. User allocates this array */
 	/* and is responsible for freeing it. */
@@ -73,7 +92,7 @@ typedef struct kmeans_config
 	/* calculations, but for which you still want included in the process */
 	/* (for examples, database nulls, or geometry empties) use a NULL */
 	/* value in this list. All NULL values will be returned in the */
-	/* KMEANS_NULL_CLUSTER. */
+	/* kmeans_baseline_NULL_CLUSTER. */
 	Pointer * objs;
 
 	/* Number of objects in the preceding array */
@@ -99,8 +118,7 @@ typedef struct kmeans_config
 	/* Array to fill in with cluster numbers. User allocates and frees. */
 	int * clusters;
 
-} kmeans_config;
+} kmeans_baseline_config;
 
 /* This is where the magic happens. */
-kmeans_result kmeans(kmeans_config *config);
-
+kmeans_baseline_result kmeans_baseline(kmeans_baseline_config *config);

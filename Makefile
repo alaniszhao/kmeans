@@ -1,15 +1,20 @@
-OBJS=kmeans.o
-EXE=example1 example2
+CC = gcc
+CFLAGS = -mavx2 -mfma -O3 -std=c99 -ffast-math -g
+LDLIBS = -lm
 
-CFLAGS=-g -O0
+OBJS = kmeans.o kmeans_baseline.o distance_kernel.o
+EXE = benchmark
 
 all: $(EXE)
+
+run: $(EXE)
+	./benchmark
 
 clean:
 	@rm -f *.o $(EXE)
 
-example1: $(OBJS) example1.o
-	$(CC) $(CFLAGS) $^ -o $@
+benchmark: $(OBJS) benchmark.o
+	$(CC) $(CFLAGS) $^ $(LDLIBS) -o $@
 
-example2: $(OBJS) example2.o
-	$(CC) $(CFLAGS) $^ -o $@
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
