@@ -16,11 +16,15 @@
 #include "distance_kernel.h"
 #include "kmeans.h"
 
-#define BATCH 56
+typedef struct point
+{
+	float x;
+	float y;
+    float z;
+} point;
 
-#define BATCH 56  /* kernel batch size */
+#define BATCH 56  // kernel batch size
 
-/* New update_r using distance_kernel batching */
 static void update_r(kmeans_config *config)
 {
     assert(config->objs);
@@ -45,36 +49,34 @@ static void update_r(kmeans_config *config)
 
         int batch_size = batch_end - batch_start;
 
-        /* Load current batch into SoA format */
         for (int i = 0; i < batch_size; i++)
         {
             int idx = batch_start + i;
-            float *p = (float*)config->objs[idx];
+            point *p = (point*)config->objs[idx];
             if (p)
             {
-                data_x[i] = p[0];
-                data_y[i] = p[1];
-                data_z[i] = p[2];
+                data_x[i] = p->x;
+                data_y[i] = p->y;
+                data_z[i] = p->z;
             }
             else
             {
                 data_x[i] = data_y[i] = data_z[i] = 0.0f;
             }
         }
-        /* Pad remaining entries */
+        // pad remaining
         for (int i = batch_size; i < BATCH; i++)
             data_x[i] = data_y[i] = data_z[i] = 0.0f;
 
-        /* Compare against each centroid using distance_kernel */
         for (int c = 0; c < config->k; c++)
         {
-            float *cent = (float*)config->centers[c];
+            point *cent = (point*)config->centers[c];
 
             distance_kernel(dist_out,
                             data_x, data_y, data_z,
-                            cent[0], cent[1], cent[2]);
+                            cent->x, cent->y, cent->z);
 
-            /* Update nearest cluster */
+            // update nearest cluster
             for (int i = 0; i < batch_size; i++)
             {
                 int idx = batch_start + i;

@@ -27,13 +27,13 @@ void distance_kernel(float *dist_out,
     __m256 R0 = _mm256_set1_ps(cent_x);
 
     __m256 R8, R9, R10, R11, R12, R13, R14;
-    R8 = _mm256_load_ps(data_x +   0);
-    R9 = _mm256_load_ps(data_x +   8);
-    R10 = _mm256_load_ps(data_x +  16);
-    R11 = _mm256_load_ps(data_x +  24);
-    R12 = _mm256_load_ps(data_x +  32);
-    R13 = _mm256_load_ps(data_x +  40);
-    R14 = _mm256_load_ps(data_x +  48);
+    R8 = _mm256_loadu_ps(data_x +   0);
+    R9 = _mm256_loadu_ps(data_x +   8);
+    R10 = _mm256_loadu_ps(data_x +  16);
+    R11 = _mm256_loadu_ps(data_x +  24);
+    R12 = _mm256_loadu_ps(data_x +  32);
+    R13 = _mm256_loadu_ps(data_x +  40);
+    R14 = _mm256_loadu_ps(data_x +  48);
     R8 = _mm256_sub_ps(R0, R8);
     R9 = _mm256_sub_ps(R0, R9);
     R10 = _mm256_sub_ps(R0, R10);
@@ -51,13 +51,13 @@ void distance_kernel(float *dist_out,
 
     R0 = _mm256_set1_ps(cent_y);
 
-    R8 = _mm256_load_ps(data_y +   0);
-    R9 = _mm256_load_ps(data_y +   8);
-    R10 = _mm256_load_ps(data_y +  16);
-    R11 = _mm256_load_ps(data_y +  24);
-    R12 = _mm256_load_ps(data_y +  32);
-    R13 = _mm256_load_ps(data_y +  40);
-    R14 = _mm256_load_ps(data_y +  48);
+    R8 = _mm256_loadu_ps(data_y +   0);
+    R9 = _mm256_loadu_ps(data_y +   8);
+    R10 = _mm256_loadu_ps(data_y +  16);
+    R11 = _mm256_loadu_ps(data_y +  24);
+    R12 = _mm256_loadu_ps(data_y +  32);
+    R13 = _mm256_loadu_ps(data_y +  40);
+    R14 = _mm256_loadu_ps(data_y +  48);
     R8 = _mm256_sub_ps(R0, R8);
     R9 = _mm256_sub_ps(R0, R9);
     R10 = _mm256_sub_ps(R0, R10);
@@ -75,13 +75,13 @@ void distance_kernel(float *dist_out,
 
     R0 = _mm256_set1_ps(cent_z);
 
-    R8 = _mm256_load_ps(data_z +   0);
-    R9 = _mm256_load_ps(data_z +   8);
-    R10 = _mm256_load_ps(data_z +  16);
-    R11 = _mm256_load_ps(data_z +  24);
-    R12 = _mm256_load_ps(data_z +  32);
-    R13 = _mm256_load_ps(data_z +  40);
-    R14 = _mm256_load_ps(data_z +  48);
+    R8 = _mm256_loadu_ps(data_z +   0);
+    R9 = _mm256_loadu_ps(data_z +   8);
+    R10 = _mm256_loadu_ps(data_z +  16);
+    R11 = _mm256_loadu_ps(data_z +  24);
+    R12 = _mm256_loadu_ps(data_z +  32);
+    R13 = _mm256_loadu_ps(data_z +  40);
+    R14 = _mm256_loadu_ps(data_z +  48);
     R8 = _mm256_sub_ps(R0, R8);
     R9 = _mm256_sub_ps(R0, R9);
     R10 = _mm256_sub_ps(R0, R10);
@@ -97,11 +97,11 @@ void distance_kernel(float *dist_out,
     R6 = FMA_ACC256(R13, R6);
     R7 = FMA_ACC256(R14, R7);
 
-    _mm256_store_ps(dist_out +   0, R1);
-    _mm256_store_ps(dist_out +   8, R2);
-    _mm256_store_ps(dist_out +  16, R3);
-    _mm256_store_ps(dist_out +  24, R4);
-    _mm256_store_ps(dist_out +  32, R5);
-    _mm256_store_ps(dist_out +  40, R6);
-    _mm256_store_ps(dist_out +  48, R7);
+    _mm256_storeu_ps(dist_out +   0, R1);
+    _mm256_storeu_ps(dist_out +   8, R2);
+    _mm256_storeu_ps(dist_out +  16, R3);
+    _mm256_storeu_ps(dist_out +  24, R4);
+    _mm256_storeu_ps(dist_out +  32, R5);
+    _mm256_storeu_ps(dist_out +  40, R6);
+    _mm256_storeu_ps(dist_out +  48, R7);
 }
