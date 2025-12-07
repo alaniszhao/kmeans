@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "distance_kernel.h"
+#include "centroid_kernel.h"
 #include "kmeans.h"
 
 typedef struct point
@@ -97,16 +98,16 @@ static void update_r(kmeans_config *config)
     }
 }
 
-static void
-update_means(kmeans_config *config)
+static void update_means(kmeans_config *config)
 {
-	int i;
-
-	for (i = 0; i < config->k; i++)
-	{
-		/* Update the centroid for this cluster */
-		(config->centroid_method)(config->objs, config->clusters, config->num_objs, i, config->centers[i]);
-	}
+    // Use the Optimized Hybrid Kernel for centroid updates
+    centroid_kernel(
+        config->num_objs, 
+        config->k, 
+        config->objs, 
+        config->clusters, 
+        config->centers
+    );
 }
 
 kmeans_result
