@@ -49,6 +49,7 @@ static void update_r(kmeans_config *config)
 
         int batch_size = batch_end - batch_start;
 
+        // initialize data x/y/z arrays
         for (int i = 0; i < batch_size; i++)
         {
             int idx = batch_start + i;
@@ -64,10 +65,11 @@ static void update_r(kmeans_config *config)
                 data_x[i] = data_y[i] = data_z[i] = 0.0f;
             }
         }
-        // pad remaining
+        // pad remaining with 0s
         for (int i = batch_size; i < BATCH; i++)
             data_x[i] = data_y[i] = data_z[i] = 0.0f;
 
+        // for each centroid, compute distances
         for (int c = 0; c < config->k; c++)
         {
             point *cent = (point*)config->centers[c];
@@ -76,7 +78,7 @@ static void update_r(kmeans_config *config)
                             data_x, data_y, data_z,
                             cent->x, cent->y, cent->z);
 
-            // update nearest cluster
+            // update nearest cluster (naive baseline implementation)
             for (int i = 0; i < batch_size; i++)
             {
                 int idx = batch_start + i;
